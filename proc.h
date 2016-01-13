@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 
 // Segments in proc->gdt.
@@ -9,11 +8,6 @@
 //void pcbp(void);
 //
 
-=======
-// Segments in proc->gdt.
-#define NSEGS     7
-
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
 // Per-CPU state
 struct cpu {
   uchar id;                    // Local APIC ID; index into cpus[] below
@@ -81,12 +75,11 @@ struct proc {
   char name[16];               // Process name (debugging)
 };
 
-<<<<<<< HEAD
+
 extern struct proc* procpoint;
 //struct proc* getpcb(void);
 
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
+
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss

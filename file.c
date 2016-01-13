@@ -109,10 +109,7 @@ fileread(struct file *f, char *addr, int n)
     return r;
   }
   panic("fileread");
-<<<<<<< HEAD
   //return 100;
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
 }
 
 //PAGEBREAK!
@@ -156,10 +153,9 @@ filewrite(struct file *f, char *addr, int n)
     return i == n ? n : -1;
   }
   panic("filewrite");
-<<<<<<< HEAD
+
  //cprintf("end\n");
  return 0;
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
+
 }
 

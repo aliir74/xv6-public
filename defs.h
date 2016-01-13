@@ -118,10 +118,8 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-<<<<<<< HEAD
 void		pcbp(void);
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
+
 
 // swtch.S
 void            swtch(struct context**, struct context*);
@@ -183,12 +181,7 @@ void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
 
-<<<<<<< HEAD
-
 //increment.c
 void		increment(void);
-
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

@@ -6,15 +6,14 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
-<<<<<<< HEAD
+
 //#include "types.h"
 //#include "user.h"
 #include "fcntl.h"
 //#include "file.h"
 
 //struct proc* procpoint;
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
+
 
 struct {
   struct spinlock lock;
@@ -23,14 +22,13 @@ struct {
 
 static struct proc *initproc;
 
-<<<<<<< HEAD
+
 //me
 //struct proc* procpoint;
 //
 
 
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
+
 int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
@@ -481,7 +479,6 @@ procdump(void)
     cprintf("\n");
   }
 }
-<<<<<<< HEAD
 
 
 void pcbp(void) {
@@ -608,5 +605,4 @@ load(void)
     close(fd);
 }
 */
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
+
