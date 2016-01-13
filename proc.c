@@ -490,7 +490,7 @@ void pcbp(struct proc *t) {
 		if(p->state == RUNNING) {
 			//tmp = p;
 			cprintf("pcbp: %s\n", p->name);
-			t = p;
+			*t = *p;
 			cprintf("tname: %s\n", t->name);
 		//	cprintf("pcbp after: %s\n", procpoint->name);
 //			cprintf("%d\n%d\n%d\n%d\n%d\n", p->context->edi, p->context->esi, p->context->ebx, p->context->ebp, p->context->eip);

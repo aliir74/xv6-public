@@ -1853,7 +1853,7 @@ load(void)
         exit();
     }
 	
-    printf(1, "size: %d .file contents name %s", size, t->name);
+    printf(1, "size: %d .file contents name %s\n", size, t->name);
     printf(1, "read ok\n");
     close(fd);
 }
