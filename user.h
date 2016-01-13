@@ -23,11 +23,10 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
-<<<<<<< HEAD
+
 //my syscall
 int pcbp(void);
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
+
 
 // ulib.c
 int stat(char*, struct stat*);

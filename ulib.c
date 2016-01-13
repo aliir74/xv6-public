@@ -103,8 +103,4 @@ memmove(void *vdst, void *vsrc, int n)
     *dst++ = *src++;
   return vdst;
 }
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66

@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
 #include "param.h"
 #include "types.h"
 #include "stat.h"
@@ -12,7 +9,7 @@
 #include "traps.h"
 #include "memlayout.h"
 
-<<<<<<< HEAD
+
 //#include "mmu.h"
 
 
@@ -113,8 +110,7 @@ struct gatedesc {
   char name[16];               // Process name (debugging)
 };
 */
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
+
 char buf[8192];
 char name[3];
 char *echoargv[] = { "echo", "ALL", "TESTS", "PASSED", 0 };
@@ -1810,7 +1806,7 @@ rand()
   return randstate;
 }
 
-<<<<<<< HEAD
+
 
 void
 save(void)
@@ -1921,10 +1917,7 @@ main(int argc, char *argv[])
   forktest();
   bigdir(); // slow
   exectest();
-<<<<<<< HEAD
 */
-=======
 
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
   exit();
 }

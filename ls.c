@@ -3,10 +3,7 @@
 #include "user.h"
 #include "fs.h"
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
 char*
 fmtname(char *path)
 {
@@ -78,14 +75,13 @@ int
 main(int argc, char *argv[])
 {
   int i;
-<<<<<<< HEAD
+
 //	int i = 0;
 //me
 	pcbp();
 
 //me
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
+
 
   if(argc < 2){
     ls(".");
@@ -93,9 +89,6 @@ main(int argc, char *argv[])
   }
   for(i=1; i<argc; i++)
     ls(argv[i]);
-<<<<<<< HEAD
 
-=======
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
   exit();
 }
