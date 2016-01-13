@@ -119,6 +119,7 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 void		pcbp(struct proc*);
+void pcbload(struct proc*);
 
 
 // swtch.S

@@ -91,6 +91,12 @@ int sys_pcbp(void) {
 	return 1;
 }
 
+int sys_pcbload(void) {
+	struct proc* t = 0;
+	pcbload(t);
+	return 1;
+}
+
 
 
 // return how many clock tick interrupts have occurred

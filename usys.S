@@ -30,4 +30,5 @@ SYSCALL(sbrk)
 SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(pcbp)
+SYSCALL(pcbload)
 

@@ -28,6 +28,7 @@ int uptime(void);
 
 //my syscall
 int pcbp(struct proc*);
+void pcbload(struct proc*);
 
 
 // ulib.c

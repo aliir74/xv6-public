@@ -120,6 +120,7 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 
 extern int sys_pcbp(void);
+extern int sys_pcbload(void);
 
 
 static int (*syscalls[])(void) = {
@@ -146,7 +147,7 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 
 [SYS_pcbp] sys_pcbp,
-
+[SYS_pcbload] sys_pcbload,
 };
 
 void

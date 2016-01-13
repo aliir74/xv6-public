@@ -1833,95 +1833,22 @@ save(void)
     close(fd);
 }
 
-void
-load(void)
-{
-    int fd;
-    struct proc *t = 0;
 
-    fd = open("backup", O_RDONLY);
-    if(fd >= 0) {
-        printf(1, "ok: read backup file succeed\n");
-    } else {
-        printf(1, "error: read backup file failed\n");
-        exit();
-    }
-
-    int size = sizeof(*t);
-    if(read(fd, t, size) != size){
-        printf(1, "error: read from backup file failed\n");
-        exit();
-    }
-	
-    printf(1, "size: %d .file contents name %s\n", size, t->name);
-    printf(1, "read ok\n");
-    close(fd);
-}
 
 
 int
 main(int argc, char *argv[])
 {
 	printf(1, "usertests starting\n");
-//	struct proc* = tmp;
-	//pcbp(tmp);
-//1	printf(1, "name: %s\n", procpoint->name);
-	save();
-	load();
-//	struct proc* t = pcbp();
-/*  if(open("usertests.ran", 0) >= 0){
-=======
-int
-main(int argc, char *argv[])
-{
-  printf(1, "usertests starting\n");
 
-  if(open("usertests.ran", 0) >= 0){
->>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
-    printf(1, "already ran user tests -- rebuild fs.img\n");
-    exit();
-  }
-  close(open("usertests.ran", O_CREATE));
-
-  createdelete();
-  linkunlink();
-  concreate();
-  fourfiles();
-  sharedfd();
-
-  bigargtest();
-  bigwrite();
-  bigargtest();
-  bsstest();
-  sbrktest();
-  validatetest();
-
-  opentest();
-  writetest();
-  writetest1();
-  createtest();
-
-  openiputtest();
-  exitiputtest();
-  iputtest();
-
-  mem();
-  pipe1();
-  preempt();
-  exitwait();
-
-  rmdot();
-  fourteen();
-  bigfile();
-  subdir();
-  linktest();
-  unlinkread();
-  dirfile();
-  iref();
-  forktest();
-  bigdir(); // slow
-  exectest();
-*/
-
-  exit();
+	int i = 0;
+	for(i = 0; i < 20; i++) {
+		sleep(10);
+		printf(1, "%d\n", i);
+		if(i == 10) {
+			save();
+			exit();
+		}
+	}
+				exit();
 }
