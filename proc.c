@@ -481,38 +481,96 @@ procdump(void)
 }
 
 
-void pcbp(struct proc *t) {
+void pcbp(struct proc **t) {
 	struct proc *p;
-	struct proc *pt;
+	*t = allocproc();
+//	struct proc *pt;	
+	//int i, pid;
+  struct proc *np = 0;
+	
  	acquire(&ptable.lock);
-
  	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
 		if(p->state == RUNNING) {
 			//tmp = p;
 			cprintf("pcbp: %s\n", p->name);
-			pt = p;
-			*t = *p;
-			cprintf("tname: %s\n", t->name);
-			break;
+//			pt = p;
+//			*t = *p;
+//			t->pgdir = copyuvm(p->pgdir, p->sz);
+//			cprintf("tname: %s\n", t->name);
+			goto found;
 
 		}
 	}
-	pt->state = UNUSED;
+	release(&ptable.lock);
+	return;
+	
+found:
+	  // Copy process state from p.
+	  cprintf("1\n");
+  if((np->pgdir = copyuvm(p->pgdir, p->sz)) == 0){
+    kfree(np->kstack);
+    np->kstack = 0;
+    np->state = UNUSED;
+    return;
+  } else {
+  	cprintf("1111\n");
+  	*((*t)->pgdir) = *(np->pgdir);
+  }
+//  (**t).sz = 10;
+  cprintf("2\n");
+ // (*t)->sz = p->sz;
+ cprintf("%d\n", p->sz);
+  cprintf("2.5\n");
+//  t->parent = 1;
+  *(p->tf) = *(proc->tf);
+	cprintf("3\n");
+  // Clear %eax so that fork returns 0 in the child.
+//  np->tf->eax = 0;
+
+  /*for(i = 0; i < NOFILE; i++)
+    if(proc->ofile[i])
+      np->ofile[i] = filedup(proc->ofile[i]);
+     */
+  //np->cwd = idup(proc->cwd);
+cprintf("%s\n", p->name);
+  safestrcpy((*t)->name, p->name, sizeof(p->name));
+ cprintf("4\n");
+ // pid = np->pid;
+
+
+	
+	
+	//pt->state = UNUSED;
 	release(&ptable.lock);
 	return;
 
 }
 
 void pcbload(struct proc* t) {
+	
 	struct proc *p;
- 	acquire(&ptable.lock);
- 	t->state = RUNNING;
-	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-		if(p->state == UNUSED) {
-			*p = *t;
+	struct proc* lsproc, *tmpproc;
+	p = allocproc();
+	acquire(&ptable.lock);
+	
+	
+
+	*(p->pgdir) = *(t->pgdir);
+//	p->sz = t->sz;
+	p->sz = 53248;
+
+	for(tmpproc = ptable.proc; tmpproc < &ptable.proc[NPROC]; tmpproc++){
+		if(tmpproc->state == RUNNING) {
+			lsproc = tmpproc;
 			break;
 		}
-	}	
+	}
+	p->parent = lsproc;
+	*p->tf = *lsproc->tf;
+	p->cwd = idup(lsproc->cwd);
+ 	
+ 	p->state = RUNNABLE;
+
 	release(&ptable.lock);
 	return;
 }
