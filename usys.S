@@ -29,3 +29,7 @@ SYSCALL(getpid)
 SYSCALL(sbrk)
 SYSCALL(sleep)
 SYSCALL(uptime)
+<<<<<<< HEAD
+SYSCALL(pcbp)
+=======
+>>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66

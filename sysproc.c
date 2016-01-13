@@ -6,6 +6,10 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+<<<<<<< HEAD
+//#include "inc.h"
+=======
+>>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
 
 int
 sys_fork(void)
@@ -77,6 +81,19 @@ sys_sleep(void)
   return 0;
 }
 
+<<<<<<< HEAD
+int sys_pcbp(void) {
+/*	int i = 0;
+	for(i = 0; i < 20; i++) {
+		cprintf("%d\n", i);
+	}*/
+	pcbp();
+	return 1;
+}
+
+
+=======
+>>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
 // return how many clock tick interrupts have occurred
 // since start.
 int

@@ -6,6 +6,15 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+<<<<<<< HEAD
+//#include "types.h"
+//#include "user.h"
+#include "fcntl.h"
+//#include "file.h"
+
+//struct proc* procpoint;
+=======
+>>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
 
 struct {
   struct spinlock lock;
@@ -14,6 +23,14 @@ struct {
 
 static struct proc *initproc;
 
+<<<<<<< HEAD
+//me
+//struct proc* procpoint;
+//
+
+
+=======
+>>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
 int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
@@ -464,3 +481,132 @@ procdump(void)
     cprintf("\n");
   }
 }
+<<<<<<< HEAD
+
+
+void pcbp(void) {
+	struct proc *p;
+
+ 	acquire(&ptable.lock);
+
+ 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		if(p->state == RUNNING) {
+			//tmp = p;
+			cprintf("pcbp: %s\n", p->name);
+			procpoint = p;
+			cprintf("pcbp after: %s\n", procpoint->name);
+//			cprintf("%d\n%d\n%d\n%d\n%d\n", p->context->edi, p->context->esi, p->context->ebx, p->context->ebp, p->context->eip);
+//			cprintf("start writing '%s' process to file...\n", p->name);		
+//			fileinit();
+/*
+			f = filealloc();
+			if(f == 0) {
+				cprintf("Error file allocationg!\n");
+			} else {
+				int fd;
+				fd = open("backup", O_CREATE | O_RDWR);
+				if(fd >= 0) {
+					printf(1 , "ok: create backup file succeed\n");
+				} else {
+					printf(1, "error: create backup file failed\n");
+			        exit();
+				}
+				int size = sizeof(*p);
+				if(write(fd, p, size) != size) {
+					printf(1, "error: create from backup file failed\n");
+					exit();
+				}
+				printf(1, "write ok\n");
+				close(fd);
+				
+				
+				
+				int fd2;
+				struct proc* load;
+				fd2 = open("backup", O_RDONLY);
+				if(fd2 >= 0) {
+					printf(1, "ok: read backup file succeed\n");
+				} else {
+					printf(1, "error: read backup file failed\n");
+					exit();
+				}
+				int size2 = sizeof(*load);
+				if(read(fd2, load, size2) != size2){
+					printf(1, "error: read from backup file failed\n");
+					exit();
+				}
+				printf(1, "%s\n", load->name);
+				printf(1, "read ok\n");
+				close(fd2);*/
+				//dup();
+				//cprintf("%d", k);
+				/*char ch[16] = "aliali";
+				filewrite(f, ch, 16);
+				cprintf("DONE!\n");
+				char ch2[16] = "mahshid";
+				cprintf("%d\n", fileread(f, ch2, 16));
+				cprintf("%s\n", ch2);*/
+				
+			//}
+		}
+	}
+	release(&ptable.lock);
+	return;
+//	return tmp;
+}
+
+/*struct proc* getpcb(void) {
+	return procpoint;
+}*/
+
+/*void
+save(void)
+{
+    int fd;
+    struct test t;
+    t.name = 's';
+    t.number = 1;
+
+    fd = open("backup", O_CREATE | O_RDWR);
+    if(fd >= 0) {
+        printf(1, "ok: create backup file succeed\n");
+    } else {
+        printf(1, "error: create backup file failed\n");
+        exit();
+    }
+
+    int size = sizeof(t);
+    if(write(fd, &t, size) != size){
+        printf(1, "error: write to backup file failed\n");
+        exit();
+    }
+    printf(1, "write ok\n");
+    close(fd);
+}
+
+void
+load(void)
+{
+    int fd;
+    struct test t;
+
+    fd = open("backup", O_RDONLY);
+    if(fd >= 0) {
+        printf(1, "ok: read backup file succeed\n");
+    } else {
+        printf(1, "error: read backup file failed\n");
+        exit();
+    }
+
+    int size = sizeof(t);
+    if(read(fd, &t, size) != size){
+        printf(1, "error: read from backup file failed\n");
+        exit();
+    }
+    printf(1, "file contents name %c and number %d", t.name, t.number);
+    printf(1, "read ok\n");
+    close(fd);
+}
+*/
+=======
+>>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66

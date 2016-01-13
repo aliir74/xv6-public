@@ -176,6 +176,11 @@ void
 panic(char *s)
 {
   printf(2, "%s\n", s);
+<<<<<<< HEAD
+	//printf(2, "%s\n", s);
+	//printf(2, "ali");
+=======
+>>>>>>> 50edfe1412e5389ce4e3078b223e7b2e72e6ba66
   exit();
 }
 
