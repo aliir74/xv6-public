@@ -1812,8 +1812,10 @@ void
 save(void)
 {
     int fd;
-	struct proc* t = procpoint;
-
+	struct proc* t = 0;
+//	t->pid = 100;
+	pcbp(t);
+	printf(1, "\n\n\n\ntname: %s\n\n\n", t->name);
     fd = open("backup", O_CREATE | O_RDWR);
     if(fd >= 0) {
         printf(1, "ok: create backup file succeed\n");
@@ -1827,7 +1829,7 @@ save(void)
         printf(1, "error: write to backup file failed\n");
         exit();
     }
-    printf(1, "write ok\n");
+    printf(1, "size: %d .write ok. name: %s\n", size, t->name);
     close(fd);
 }
 
@@ -1835,7 +1837,7 @@ void
 load(void)
 {
     int fd;
-    struct proc t;
+    struct proc *t = 0;
 
     fd = open("backup", O_RDONLY);
     if(fd >= 0) {
@@ -1845,12 +1847,13 @@ load(void)
         exit();
     }
 
-    int size = sizeof(t);
-    if(read(fd, &t, size) != size){
+    int size = sizeof(*t);
+    if(read(fd, t, size) != size){
         printf(1, "error: read from backup file failed\n");
         exit();
     }
-    printf(1, "file contents name %s", t.name);
+	
+    printf(1, "size: %d .file contents name %s", size, t->name);
     printf(1, "read ok\n");
     close(fd);
 }
@@ -1860,8 +1863,9 @@ int
 main(int argc, char *argv[])
 {
 	printf(1, "usertests starting\n");
-	pcbp();
-	printf(1, "name: %s\n", procpoint->name);
+//	struct proc* = tmp;
+	//pcbp(tmp);
+//1	printf(1, "name: %s\n", procpoint->name);
 	save();
 	load();
 //	struct proc* t = pcbp();

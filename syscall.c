@@ -16,6 +16,23 @@
 // library system call function. The saved user %esp points
 // to a saved program counter, and then the first argument.
 
+
+/*
+struct proc* getproc() {
+	struct proc *p;
+
+ 	acquire(&ptable.lock);
+
+ 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+		if(p->state == RUNNING) {
+			return p;
+		}
+	}
+	release(&ptable.lock);
+}
+
+*/
+
 // Fetch the int at addr from the current process.
 int
 fetchint(uint addr, int *ip)

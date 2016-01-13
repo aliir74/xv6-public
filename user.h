@@ -1,5 +1,7 @@
 struct stat;
 struct rtcdate;
+struct proc;
+
 
 // system calls
 int fork(void);
@@ -25,7 +27,7 @@ int sleep(int);
 int uptime(void);
 
 //my syscall
-int pcbp(void);
+int pcbp(struct proc*);
 
 
 // ulib.c

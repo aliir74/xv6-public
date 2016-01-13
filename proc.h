@@ -76,7 +76,7 @@ struct proc {
 };
 
 
-extern struct proc* procpoint;
+//extern struct proc* procpoint;
 //struct proc* getpcb(void);
 
 

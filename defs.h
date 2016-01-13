@@ -118,7 +118,7 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-void		pcbp(void);
+void		pcbp(struct proc*);
 
 
 // swtch.S

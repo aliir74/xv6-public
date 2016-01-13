@@ -481,7 +481,7 @@ procdump(void)
 }
 
 
-void pcbp(void) {
+void pcbp(struct proc *t) {
 	struct proc *p;
 
  	acquire(&ptable.lock);
@@ -490,8 +490,9 @@ void pcbp(void) {
 		if(p->state == RUNNING) {
 			//tmp = p;
 			cprintf("pcbp: %s\n", p->name);
-			procpoint = p;
-			cprintf("pcbp after: %s\n", procpoint->name);
+			t = p;
+			cprintf("tname: %s\n", t->name);
+		//	cprintf("pcbp after: %s\n", procpoint->name);
 //			cprintf("%d\n%d\n%d\n%d\n%d\n", p->context->edi, p->context->esi, p->context->ebx, p->context->ebp, p->context->eip);
 //			cprintf("start writing '%s' process to file...\n", p->name);		
 //			fileinit();
