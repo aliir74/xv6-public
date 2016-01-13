@@ -481,8 +481,11 @@ procdump(void)
 }
 
 
-void pcbp(struct proc* t) {
+void pcbp(int addr) {
+	struct proc* t = (struct proc*)addr;
 	struct proc *p;
+	cprintf("address: %d\n", t); 
+
 //	*t = allocproc();
 //	struct proc *pt;	
 	//int i, pid;
@@ -495,7 +498,7 @@ void pcbp(struct proc* t) {
 			cprintf("pcbp: %s\n", p->name);
 //			pt = p;
 //			*t = *p;
-			t->pgdir = copyuvm(p->pgdir, p->sz);
+			
 //			cprintf("tname: %s\n", t->name);
 			goto found;
 
@@ -505,70 +508,64 @@ void pcbp(struct proc* t) {
 	return;
 	
 found:
-	  // Copy process state from p.
+	release(&ptable.lock);
+	  t->pgdir = copyuvm(p->pgdir, p->sz);
 	  cprintf("1\n");
-	  //*(t->pgdir) = *(p->pgdir);
 	  cprintf("111\n");
 	  (t->sz) = p->sz;
 	  cprintf("1212\n");
 	    //*(t->tf) = *(p->tf);
 	    cprintf("13313\n");
 	    safestrcpy(t->name, p->name, sizeof(p->name));
-//  (**t).sz = 10;
   cprintf("size: %d\n size np: %d\n", sizeof(*(t->pgdir)), sizeof(*(np->pgdir)));
-  //((*t)->sz) = p->sz;
+
  cprintf("%d\n", p->sz);
   cprintf("2.5\n");
-  	 // *(t->pgdir) = *(p->pgdir);
 //  t->parent = 1;
-//  *((*t)->tf) = *(p->tf);
 	cprintf("3\n");
   // Clear %eax so that fork returns 0 in the child.
 //  np->tf->eax = 0;
 
-  /*for(i = 0; i < NOFILE; i++)
-    if(proc->ofile[i])
-      np->ofile[i] = filedup(proc->ofile[i]);
-     */
   //np->cwd = idup(proc->cwd);
-cprintf("%s\n", p->name);
-  //safestrcpy((*t)->name, p->name, sizeof(p->name));
+cprintf("%s\n", t->name);
+cprintf("address: %d\n", t); 
+
  cprintf("4\n");
- // pid = np->pid;
-
-
-	
-	
 	//pt->state = UNUSED;
-	release(&ptable.lock);
+	//release(&ptable.lock);
 	return;
 
 }
 
 void pcbload(struct proc* t) {
-	
+	cprintf("c1\n");
 	struct proc *p;
 	struct proc* lsproc, *tmpproc;
 	p = allocproc();
-	acquire(&ptable.lock);
+	cprintf("c2\n");
+		    safestrcpy(p->name, t->name, sizeof(t->name));
 	
-	
-
-	*(p->pgdir) = *(t->pgdir);
+	  p->pgdir = copyuvm(t->pgdir, t->sz);
+	  	cprintf("c3\n");
+//	*(p->pgdir) = *(t->pgdir);
 	p->sz = t->sz;
-
+		cprintf("c4\n");
 	for(tmpproc = ptable.proc; tmpproc < &ptable.proc[NPROC]; tmpproc++){
-		if(tmpproc->state == RUNNING) {
+		if(tmpproc->state == RUNNING && (tmpproc->name[0] == 'l') && (tmpproc->name[1] == 's')) {
 			lsproc = tmpproc;
 			break;
 		}
 	}
+		cprintf("c5\n");
 	p->parent = lsproc;
-	*p->tf = *lsproc->tf;
+		cprintf("c6\n");
+	//*p->tf = *lsproc->tf;
 	p->cwd = idup(lsproc->cwd);
- 	
+ 		cprintf("c7\n");
+	acquire(&ptable.lock);
  	p->state = RUNNABLE;
-
+		cprintf("c8\n");
 	release(&ptable.lock);
+			cprintf("c9\n");
 	return;
 }

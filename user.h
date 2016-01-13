@@ -27,7 +27,7 @@ int sleep(int);
 int uptime(void);
 
 //my syscall
-int pcbp(struct proc*);
+int pcbp(int addr);
 void pcbload(struct proc*);
 
 

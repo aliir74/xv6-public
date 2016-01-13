@@ -1812,9 +1812,12 @@ void
 save(void)
 {
     int fd;
-	struct proc* t = (struct proc*)malloc(53248);
+	struct proc* t = malloc(sizeof(struct proc));
+	printf(1, "address user space function before: %d\n", t);
+	printf(1, "sizeof(struct proc)): %d", sizeof(struct proc));
 //	t->pid = 100;
-	pcbp(t);
+	pcbp((int)t);
+	printf(1, "address user space function after: %d\n", t);
 	printf(1, "\n\n\n\ntname: %s\n\n\n", t->name);
     fd = open("backup", O_CREATE | O_RDWR);
     if(fd >= 0) {
