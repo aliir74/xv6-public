@@ -1812,10 +1812,10 @@ void
 save(void)
 {
     int fd;
-	struct proc** t = 0;
+	struct proc* t = (struct proc*)malloc(53248);
 //	t->pid = 100;
 	pcbp(t);
-	printf(1, "\n\n\n\ntname: %s\n\n\n", (*t)->name);
+	printf(1, "\n\n\n\ntname: %s\n\n\n", t->name);
     fd = open("backup", O_CREATE | O_RDWR);
     if(fd >= 0) {
         printf(1, "ok: create backup file succeed\n");
@@ -1824,12 +1824,12 @@ save(void)
         exit();
     }
 
-    int size = sizeof(**t);
-    if(write(fd, *t, size) != size){
+    int size = sizeof(*t);
+    if(write(fd, t, size) != size){
         printf(1, "error: write to backup file failed\n");
         exit();
     }
-    printf(1, "size: %d .write ok. name: %s\n", size, (*t)->name);
+    printf(1, "size: %d .write ok. name: %s\n", size, t->name);
     close(fd);
 }
 

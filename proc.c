@@ -481,9 +481,9 @@ procdump(void)
 }
 
 
-void pcbp(struct proc **t) {
+void pcbp(struct proc* t) {
 	struct proc *p;
-	*t = allocproc();
+//	*t = allocproc();
 //	struct proc *pt;	
 	//int i, pid;
   struct proc *np = 0;
@@ -495,7 +495,7 @@ void pcbp(struct proc **t) {
 			cprintf("pcbp: %s\n", p->name);
 //			pt = p;
 //			*t = *p;
-//			t->pgdir = copyuvm(p->pgdir, p->sz);
+			t->pgdir = copyuvm(p->pgdir, p->sz);
 //			cprintf("tname: %s\n", t->name);
 			goto found;
 
@@ -507,22 +507,21 @@ void pcbp(struct proc **t) {
 found:
 	  // Copy process state from p.
 	  cprintf("1\n");
-  if((np->pgdir = copyuvm(p->pgdir, p->sz)) == 0){
-    kfree(np->kstack);
-    np->kstack = 0;
-    np->state = UNUSED;
-    return;
-  } else {
-  	cprintf("1111\n");
-  	*((*t)->pgdir) = *(np->pgdir);
-  }
+	  //*(t->pgdir) = *(p->pgdir);
+	  cprintf("111\n");
+	  (t->sz) = p->sz;
+	  cprintf("1212\n");
+	    //*(t->tf) = *(p->tf);
+	    cprintf("13313\n");
+	    safestrcpy(t->name, p->name, sizeof(p->name));
 //  (**t).sz = 10;
-  cprintf("2\n");
- // (*t)->sz = p->sz;
+  cprintf("size: %d\n size np: %d\n", sizeof(*(t->pgdir)), sizeof(*(np->pgdir)));
+  //((*t)->sz) = p->sz;
  cprintf("%d\n", p->sz);
   cprintf("2.5\n");
+  	 // *(t->pgdir) = *(p->pgdir);
 //  t->parent = 1;
-  *(p->tf) = *(proc->tf);
+//  *((*t)->tf) = *(p->tf);
 	cprintf("3\n");
   // Clear %eax so that fork returns 0 in the child.
 //  np->tf->eax = 0;
@@ -533,7 +532,7 @@ found:
      */
   //np->cwd = idup(proc->cwd);
 cprintf("%s\n", p->name);
-  safestrcpy((*t)->name, p->name, sizeof(p->name));
+  //safestrcpy((*t)->name, p->name, sizeof(p->name));
  cprintf("4\n");
  // pid = np->pid;
 
@@ -556,8 +555,7 @@ void pcbload(struct proc* t) {
 	
 
 	*(p->pgdir) = *(t->pgdir);
-//	p->sz = t->sz;
-	p->sz = 53248;
+	p->sz = t->sz;
 
 	for(tmpproc = ptable.proc; tmpproc < &ptable.proc[NPROC]; tmpproc++){
 		if(tmpproc->state == RUNNING) {

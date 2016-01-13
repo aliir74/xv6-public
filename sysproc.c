@@ -86,7 +86,7 @@ int sys_pcbp(void) {
 	for(i = 0; i < 20; i++) {
 		cprintf("%d\n", i);
 	}*/
-	struct proc** t = 0;
+	struct proc* t = 0;
 	pcbp(t);
 	return 1;
 }
