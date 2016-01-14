@@ -1819,8 +1819,9 @@ save(void)
 //	t->pid = 100;
 	ret = pcbp((int)t);
 	
-	int pgtablesize = t->sz * PGSIZE;
+	int pgtablesize = t->sz;
 	void* pgtable = malloc(pgtablesize);
+	printf(1, "malloc(pgtablesize)\n");
 	pgsave(pgtable);
 	//save context:
 	//struct context* cont = malloc(sizeof(struct context));
@@ -1846,8 +1847,7 @@ save(void)
     
     //write pgtable in file
     int i;
-    for(i = 0; i < t->sz; i++) {
-    	// pgtable+i or pgtable+i*PGSIZE!?!?!?!?!?!?!??!?!
+    for(i = 0; i < t->sz; i += PGSIZE) {
     	write(fd, pgtable+i, PGSIZE);
     }
     

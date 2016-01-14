@@ -181,9 +181,12 @@ load(void)
         exit();
     }
 	
-	int pgtablesize = t->sz * PGSIZE;
+	int pgtablesize = t->sz;
 	void* pgtable = malloc(pgtablesize);
-
+	if(read(fd, pgtable, t->sz)) {
+		printf(1, "error: read from backup file failed(page read)\n");
+		exit();
+	}
     printf(1, "size: %d .file contents name %s\n", size, t->name);
     printf(1, "read ok\n");
     close(fd);
