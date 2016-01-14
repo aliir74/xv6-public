@@ -165,8 +165,8 @@ void
 load(void)
 {
     int fd;
-    struct proc *t = 0;
-
+    struct proc *t = malloc(sizeof(struct proc));
+	printf(1, "loadaddr: %d", t);
     fd = open("backup", O_RDONLY);
     if(fd >= 0) {
         printf(1, "ok: read backup file succeed\n");

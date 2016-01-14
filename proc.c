@@ -543,7 +543,8 @@ void pcbload(struct proc* t) {
 	struct proc* lsproc, *tmpproc;
 	p = allocproc();
 	cprintf("c2\n");
-		    safestrcpy(p->name, t->name, sizeof(t->name));
+	cprintf("t: %s\n", t->name);
+    safestrcpy(p->name, t->name, sizeof(t->name));
 	
 	  p->pgdir = copyuvm(t->pgdir, t->sz);
 	  	cprintf("c3\n");
@@ -556,6 +557,7 @@ void pcbload(struct proc* t) {
 			break;
 		}
 	}
+	cprintf("t->name: %s\n", p->name);
 		cprintf("c5\n");
 	p->parent = lsproc;
 		cprintf("c6\n");
