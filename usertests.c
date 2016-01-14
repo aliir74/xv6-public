@@ -1,4 +1,4 @@
-
+#define PGSIZE 4096
 #include "param.h"
 #include "types.h"
 #include "stat.h"
@@ -1819,6 +1819,9 @@ save(void)
 //	t->pid = 100;
 	ret = pcbp((int)t);
 	
+	int pgtablesize = t->sz * PGSIZE;
+	void* pgtable = malloc(pgtablesize);
+	pgsave(pgtable);
 	//save context:
 	//struct context* cont = malloc(sizeof(struct context));
 	//contsave(cont);
@@ -1833,43 +1836,26 @@ save(void)
         printf(1, "error: create backup file failed\n");
         exit();
     }
+    
 
     int size = sizeof(*t);
     if(write(fd, t, size) != size){
         printf(1, "error: write to backup file failed\n");
         exit();
     }
+    
+    //write pgtable in file
+    int i;
+    for(i = 0; i < t->sz; i++) {
+    	// pgtable+i or pgtable+i*PGSIZE!?!?!?!?!?!?!??!?!
+    	write(fd, pgtable+i, PGSIZE);
+    }
+    
     printf(1, "size: %d .write ok. name: %s\n", size, t->name);
     close(fd);
     return ret;
 }
 
-void
-load(void)
-{
-    int fd;
-    struct proc *t = malloc(sizeof(struct proc));
-	printf(1, "loadaddr: %d", t);
-    fd = open("backup", O_RDONLY);
-    if(fd >= 0) {
-        printf(1, "ok: read backup file succeed\n");
-    } else {
-        printf(1, "error: read backup file failed\n");
-        exit();
-    }
-
-    int size = sizeof(*t);
-    if(read(fd, t, size) != size){
-        printf(1, "error: read from backup file failed\n");
-        exit();
-    }
-	
-    printf(1, "size: %d .file contents name %s\n", size, t->name);
-    printf(1, "read ok\n");
-    close(fd);
-    pcbload(t);
-    printf(1, "end of load function in userspace! \n");
-}
 
 
 int

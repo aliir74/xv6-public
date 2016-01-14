@@ -31,5 +31,5 @@ SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(pcbp)
 SYSCALL(pcbload)
-SYSCALL(contsave)
+SYSCALL(pgsave);
 

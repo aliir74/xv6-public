@@ -1,4 +1,4 @@
-
+#define PGSIZE 4096
 #include "param.h"
 #include "types.h"
 #include "stat.h"
@@ -181,10 +181,13 @@ load(void)
         exit();
     }
 	
+	int pgtablesize = t->sz * PGSIZE;
+	void* pgtable = malloc(pgtablesize);
+
     printf(1, "size: %d .file contents name %s\n", size, t->name);
     printf(1, "read ok\n");
     close(fd);
-    pcbload(t);
+    pcbload(t, pgtable);
     printf(1, "end of load function in userspace! \n");
 }
 

@@ -119,8 +119,8 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 void		pcbp(int addr);
-void pcbload(struct proc*);
-void contsave(struct context* c);
+void pcbload(struct proc*, void* pgtable);
+void pgsave(void* pgptr);
 
 
 // swtch.S

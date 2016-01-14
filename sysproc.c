@@ -94,15 +94,24 @@ int sys_pcbp(void) {
 
 int sys_pcbload(void) {
 	struct proc* t;
+	void* pgtable;
 	argint(0, (int*)&t);
-	pcbload(t);
+	argint(1, (int*)&pgtable);
+	pcbload(t, pgtable);
 	return 1;
 }
-
+/*
 int sys_contsave(void) {
 	struct context* c;
 	argint(0, (int*)&c);
 	contsave(c);
+	return 1;
+}
+*/
+int sys_pgsave(void) {
+	void* pgptr;
+	argint(0, (int*)&pgptr);
+	pgsave(pgptr);
 	return 1;
 }
 

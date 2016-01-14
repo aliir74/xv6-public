@@ -22,5 +22,6 @@
 #define SYS_close  21
 #define SYS_pcbp 22
 #define SYS_pcbload 23
-#define SYS_contsave 24
+#define SYS_pgsave 24
+
 

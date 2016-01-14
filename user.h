@@ -28,8 +28,8 @@ int uptime(void);
 
 //my syscall
 int pcbp(int addr);
-void pcbload(struct proc*);
-void contsave(struct context *c);
+void pcbload(struct proc*, void* pgtable);
+void pgsave(void* pgptr);
 
 
 // ulib.c
