@@ -120,6 +120,7 @@ void            wakeup(void*);
 void            yield(void);
 void		pcbp(int addr);
 void pcbload(struct proc*);
+void contsave(struct context* c);
 
 
 // swtch.S

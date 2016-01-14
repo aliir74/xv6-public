@@ -1,7 +1,7 @@
 struct stat;
 struct rtcdate;
 struct proc;
-
+struct context;
 
 // system calls
 int fork(void);
@@ -29,6 +29,7 @@ int uptime(void);
 //my syscall
 int pcbp(int addr);
 void pcbload(struct proc*);
+void contsave(struct context *c);
 
 
 // ulib.c

@@ -1808,15 +1808,22 @@ rand()
 
 
 
-void
+int
 save(void)
 {
     int fd;
+    int ret;
 	struct proc* t = malloc(sizeof(struct proc));
 	printf(1, "address user space function before: %d\n", t);
 	printf(1, "sizeof(struct proc)): %d", sizeof(struct proc));
 //	t->pid = 100;
-	pcbp((int)t);
+	ret = pcbp((int)t);
+	
+	//save context:
+	//struct context* cont = malloc(sizeof(struct context));
+	//contsave(cont);
+	
+	
 	printf(1, "address user space function after: %d\n", t);
 	printf(1, "\n\n\n\ntname: %s\n\n\n", t->name);
     fd = open("backup", O_CREATE | O_RDWR);
@@ -1834,9 +1841,35 @@ save(void)
     }
     printf(1, "size: %d .write ok. name: %s\n", size, t->name);
     close(fd);
+    return ret;
 }
 
+void
+load(void)
+{
+    int fd;
+    struct proc *t = malloc(sizeof(struct proc));
+	printf(1, "loadaddr: %d", t);
+    fd = open("backup", O_RDONLY);
+    if(fd >= 0) {
+        printf(1, "ok: read backup file succeed\n");
+    } else {
+        printf(1, "error: read backup file failed\n");
+        exit();
+    }
 
+    int size = sizeof(*t);
+    if(read(fd, t, size) != size){
+        printf(1, "error: read from backup file failed\n");
+        exit();
+    }
+	
+    printf(1, "size: %d .file contents name %s\n", size, t->name);
+    printf(1, "read ok\n");
+    close(fd);
+    pcbload(t);
+    printf(1, "end of load function in userspace! \n");
+}
 
 
 int
@@ -1846,12 +1879,18 @@ main(int argc, char *argv[])
 
 	int i = 0;
 	for(i = 0; i < 20; i++) {
-		sleep(10);
 		printf(1, "%d\n", i);
 		if(i == 10) {
-			save();
-			exit();
+			if (save() != 0) {
+				/*if (fork() == 0) {
+					load();
+				} else {
+					wait();
+					exit();
+				}*/
+				exit();
+			}
 		}
 	}
-				exit();
+	exit();
 }

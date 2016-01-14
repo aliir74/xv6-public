@@ -99,7 +99,12 @@ int sys_pcbload(void) {
 	return 1;
 }
 
-
+int sys_contsave(void) {
+	struct context* c;
+	argint(0, (int*)&c);
+	contsave(c);
+	return 1;
+}
 
 // return how many clock tick interrupts have occurred
 // since start.

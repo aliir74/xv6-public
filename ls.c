@@ -185,6 +185,7 @@ load(void)
     printf(1, "read ok\n");
     close(fd);
     pcbload(t);
+    printf(1, "end of load function in userspace! \n");
 }
 
 int
@@ -198,6 +199,8 @@ main(int argc, char *argv[])
 
 //me
 	load();
+	printf(1, "main print!\n");
+	wait();
 /*
   if(argc < 2){
     ls(".");

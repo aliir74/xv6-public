@@ -533,6 +533,7 @@ cprintf("address: %d\n", t);
  cprintf("4\n");
 	//pt->state = UNUSED;
 	//release(&ptable.lock);
+	cprintf("%x", t->tf->eip);
 	return;
 
 }
@@ -540,34 +541,37 @@ cprintf("address: %d\n", t);
 void pcbload(struct proc* t) {
 	cprintf("c1\n");
 	struct proc *p;
-	struct proc* lsproc, *tmpproc;
 	p = allocproc();
 	cprintf("c2\n");
 	cprintf("t: %s\n", t->name);
     safestrcpy(p->name, t->name, sizeof(t->name));
 	
-	  p->pgdir = copyuvm(t->pgdir, t->sz);
-	  	cprintf("c3\n");
+//	  p->pgdir = t->pgdir;
+	p->pgdir = copyuvm(t->pgdir, t->sz);
+    cprintf("c3\n");
 //	*(p->pgdir) = *(t->pgdir);
 	p->sz = t->sz;
-		cprintf("c4\n");
-	for(tmpproc = ptable.proc; tmpproc < &ptable.proc[NPROC]; tmpproc++){
-		if(tmpproc->state == RUNNING && (tmpproc->name[0] == 'l') && (tmpproc->name[1] == 's')) {
-			lsproc = tmpproc;
-			break;
-		}
-	}
+	*(p->tf) = *(proc->tf);
+	p->tf->eax = 0;
+	cprintf("c4\n");
 	cprintf("t->name: %s\n", p->name);
-		cprintf("c5\n");
-	p->parent = lsproc;
-		cprintf("c6\n");
+	cprintf("c5\n");
+	p->parent = proc;
+	cprintf("c6\n");
 	//*p->tf = *lsproc->tf;
-	p->cwd = idup(lsproc->cwd);
- 		cprintf("c7\n");
+	p->cwd = idup(proc->cwd);
+ 	cprintf("c7\n");
 	acquire(&ptable.lock);
  	p->state = RUNNABLE;
-		cprintf("c8\n");
+	cprintf("c8\n");
 	release(&ptable.lock);
-			cprintf("c9\n");
+	cprintf("c9\n");
+
 	return;
 }
+
+void contsave(struct context* c) {
+	swtch(&c, cpu->scheduler);
+	return;
+}
+
