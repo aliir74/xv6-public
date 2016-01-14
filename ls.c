@@ -164,6 +164,8 @@ ls(char *path)
 void
 load(void)
 {
+
+
     int fd;
     struct proc *t = malloc(sizeof(struct proc));
 	printf(1, "loadaddr: %d", t);
@@ -174,7 +176,22 @@ load(void)
         printf(1, "error: read backup file failed\n");
         exit();
     }
-
+    /*
+    struct stat* st = 0;
+    fstat(fd, st);
+    printf(1, "stat->size: %d\n", st->size);
+    
+    void* tmp = malloc(sizeof(t)+t->sz);
+    printf(1, "size to read: %d\n", sizeof(t)+t->sz);
+    */
+    /*
+    read(fd, tmp, sizeof(t)+t->sz);
+    t = tmp;
+    void* pgtable = malloc(t->sz);
+    pgtable = t+sizeof(t);
+    */
+    
+	
     int size = sizeof(*t);
     if(read(fd, t, size) != size){
         printf(1, "error: read from backup file failed\n");
@@ -182,12 +199,16 @@ load(void)
     }
 	
 	int pgtablesize = t->sz;
+//	printf(1, "t->sz: %d\n", t->sz);
+	printf(1, "size to read: %d\n", sizeof(t)+t->sz);
 	void* pgtable = malloc(pgtablesize);
 	if(read(fd, pgtable, t->sz)) {
 		printf(1, "error: read from backup file failed(page read)\n");
 		exit();
 	}
-    printf(1, "size: %d .file contents name %s\n", size, t->name);
+	
+	
+   // printf(1, "size: %d .file contents name %s\n", size, t->name);
     printf(1, "read ok\n");
     close(fd);
     pcbload(t, pgtable);

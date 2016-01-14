@@ -1820,13 +1820,14 @@ save(void)
 	ret = pcbp((int)t);
 	
 	int pgtablesize = t->sz;
+//	int pgtablesize = 172040;
 	void* pgtable = malloc(pgtablesize);
-	printf(1, "malloc(pgtablesize)\n");
+	printf(1, "malloc(pgtablesize) : %d   %d\n", pgtablesize, t->sz);
+	
 	pgsave(pgtable);
 	//save context:
 	//struct context* cont = malloc(sizeof(struct context));
 	//contsave(cont);
-	
 	
 	printf(1, "address user space function after: %d\n", t);
 	printf(1, "\n\n\n\ntname: %s\n\n\n", t->name);
@@ -1837,21 +1838,34 @@ save(void)
         printf(1, "error: create backup file failed\n");
         exit();
     }
-    
+    struct stat* st = 0;
+
 
     int size = sizeof(*t);
     if(write(fd, t, size) != size){
         printf(1, "error: write to backup file failed\n");
         exit();
     }
-    
+        fstat(fd, st);
+        printf(1, "stat->size: %d\n", st->size);
     //write pgtable in file
     int i;
+    int sum = 0;
     for(i = 0; i < t->sz; i += PGSIZE) {
-    	write(fd, pgtable+i, PGSIZE);
+		if(write(fd, pgtable+i, PGSIZE) != PGSIZE) {
+			printf(1, "error: wirte page %d to backup file failed\n", i/PGSIZE+1);
+//			exit();
+		}
+
+    	sum += PGSIZE;
     }
+        fstat(fd, st);
+    printf(1, "stat->size: %d\n", st->size);
+    printf(1, "sum: %d\n", sum);
+//    write(fd, "ali", sizeof("ali"));
     
     printf(1, "size: %d .write ok. name: %s\n", size, t->name);
+
     close(fd);
     return ret;
 }

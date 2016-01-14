@@ -513,13 +513,13 @@ walkpgdir(pde_t *pgdir, const void *va, int alloc)
 
 void pcbp(int addr) {
 	struct proc* t = (struct proc*)addr;
-	struct proc *p;
+	//struct proc *p;
 	cprintf("address: %d\n", t); 
 
 //	*t = allocproc();
 //	struct proc *pt;	
 	//int i, pid;
-  struct proc *np = 0;
+ /* struct proc *np = 0;
 	
  	acquire(&ptable.lock);
  	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
@@ -539,17 +539,19 @@ void pcbp(int addr) {
 	
 found:
 	release(&ptable.lock);
-	  t->pgdir = copyuvm(p->pgdir, p->sz);
+	*/
+	  t->pgdir = copyuvm(proc->pgdir, proc->sz);
 	  cprintf("1\n");
 	  cprintf("111\n");
-	  (t->sz) = p->sz;
+	  t->sz = proc->sz;
+	  cprintf("p->sz: %d\tt->z: %d\n", proc->sz, t->sz);
 	  cprintf("1212\n");
 	    //*(t->tf) = *(p->tf);
 	    cprintf("13313\n");
-	    safestrcpy(t->name, p->name, sizeof(p->name));
-  cprintf("size: %d\n size np: %d\n", sizeof(*(t->pgdir)), sizeof(*(np->pgdir)));
+	    safestrcpy(t->name, proc->name, sizeof(proc->name));
+//  cprintf("size: %d\n size np: %d\n", sizeof(*(t->pgdir)), sizeof(*(np->pgdir)));
 
- cprintf("%d\n", p->sz);
+ //cprintf("%d\n", p->sz);
   cprintf("2.5\n");
 //  t->parent = 1;
 	cprintf("3\n");
@@ -666,7 +668,7 @@ void pgsave(void* pgptr) {
   pte_t *pte;
   uint pa, i;
   cprintf("%d\n", proc->sz);
-  for(i = 0; i < proc->sz; i += PGSIZE){
+  for(i = 0; i < 86016; i += PGSIZE){
     if((pte = walkpgdir(proc->pgdir, (void *) i, 0)) == 0)
       panic("copyuvm: pte should exist");
     if(!(*pte & PTE_P))
