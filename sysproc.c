@@ -95,9 +95,13 @@ int sys_pcbp(void) {
 int sys_pcbload(void) {
 	struct proc* t;
 	void* pgtable;
+	struct context* cptr;
+	struct trapframe *tfptr;
 	argint(0, (int*)&t);
 	argint(1, (int*)&pgtable);
-	pcbload(t, pgtable);
+	argint(2, (int*)&cptr);
+	argint(3, (int*)&tfptr);
+	pcbload(t, pgtable, cptr, tfptr);
 	return 1;
 }
 /*
@@ -110,8 +114,12 @@ int sys_contsave(void) {
 */
 int sys_pgsave(void) {
 	void* pgptr;
+	void* cptr;
+	struct trapframe *tfptr;
 	argint(0, (int*)&pgptr);
-	pgsave(pgptr);
+	argint(1, (int*)&cptr);
+	argint(2, (int*)&tfptr);
+	pgsave(pgptr, cptr, tfptr);
 	return 1;
 }
 

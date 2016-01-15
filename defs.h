@@ -8,6 +8,7 @@ struct rtcdate;
 struct spinlock;
 struct stat;
 struct superblock;
+struct trapframe;
 
 // bio.c
 void            binit(void);
@@ -119,8 +120,8 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 void		pcbp(int addr);
-void pcbload(struct proc*, void* pgtable);
-void pgsave(void* pgptr);
+void pcbload(struct proc*, void* pgtable, struct context* cptr, struct trapframe *tfptr);
+void pgsave(void* pgptr, struct context* cptr, struct trapframe *tfptr);
 
 
 // swtch.S

@@ -12,7 +12,40 @@
 
 //#include "mmu.h"
 
+struct trapframe {
+  // registers as pushed by pusha
+  uint edi;
+  uint esi;
+  uint ebp;
+  uint oesp;      // useless & ignored
+  uint ebx;
+  uint edx;
+  uint ecx;
+  uint eax;
 
+  // rest of trap frame
+  ushort gs;
+  ushort padding1;
+  ushort fs;
+  ushort padding2;
+  ushort es;
+  ushort padding3;
+  ushort ds;
+  ushort padding4;
+  uint trapno;
+
+  // below here defined by x86 hardware
+  uint err;
+  uint eip;
+  ushort cs;
+  ushort padding5;
+  uint eflags;
+
+  // below here only when crossing rings, such as from user to kernel
+  uint esp;
+  ushort ss;
+  ushort padding6;
+};
 
 //PAGEBREAK!
 //#ifndef __ASSEMBLER__
@@ -171,7 +204,9 @@ load(void)
 	printf(1, "loadaddr: %d", t);
     fd = open("backup", O_RDONLY);
     fdpage = open("backuppage", O_RDONLY);
-    if(fd >= 0 && fdpage >= 0) {
+    int fdcont = open("backupcontext", O_RDONLY);
+    int fdtf = open("backuptf", O_RDONLY);
+    if(fd >= 0 && fdpage >= 0 && fdcont >= 0 && fdtf >= 0) {
         printf(1, "ok: read backup file succeed\n");
     } else {
         printf(1, "error: read backup file failed\n");
@@ -210,12 +245,20 @@ load(void)
 		printf(1, "error: read from backup file failed(page read), read return %d.\n", readret);
 //		exit();
 	}
-	
+	//read context:
+	struct context* cptr = malloc(sizeof(struct context));
+	read(fdcont, cptr, sizeof(struct context));
+	//read trapframe
+	struct trapframe* tfptr = malloc(sizeof(struct trapframe));
+	read(fdtf, tfptr, sizeof(struct trapframe));
 	
    // printf(1, "size: %d .file contents name %s\n", size, t->name);
     printf(1, "read ok\n");
     close(fd);
-    pcbload(t, pgtable);
+    close(fdpage);
+    close(fdcont);
+    close(fdtf);
+    pcbload(t, pgtable, cptr, tfptr);
     printf(1, "end of load function in userspace! \n");
 }
 

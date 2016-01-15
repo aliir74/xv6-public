@@ -12,7 +12,40 @@
 
 //#include "mmu.h"
 
+struct trapframe {
+  // registers as pushed by pusha
+  uint edi;
+  uint esi;
+  uint ebp;
+  uint oesp;      // useless & ignored
+  uint ebx;
+  uint edx;
+  uint ecx;
+  uint eax;
 
+  // rest of trap frame
+  ushort gs;
+  ushort padding1;
+  ushort fs;
+  ushort padding2;
+  ushort es;
+  ushort padding3;
+  ushort ds;
+  ushort padding4;
+  uint trapno;
+
+  // below here defined by x86 hardware
+  uint err;
+  uint eip;
+  ushort cs;
+  ushort padding5;
+  uint eflags;
+
+  // below here only when crossing rings, such as from user to kernel
+  uint esp;
+  ushort ss;
+  ushort padding6;
+};
 
 //PAGEBREAK!
 //#ifndef __ASSEMBLER__
@@ -130,9 +163,11 @@ save(void)
 //	int pgtablesize = 172040;
 	void* pgtable = malloc(pgtablesize);
 	printf(1, "malloc(pgtablesize) : %d   %d\n", pgtablesize, t->sz);
-	
-	pgsave(pgtable);
+	struct context* cptr = malloc(sizeof(struct context));
+	struct trapframe* tfptr = malloc(sizeof(struct trapframe));
+	pgsave(pgtable, cptr, tfptr);
 	//save context:
+	//printf(1, "pgtable: %p", pgtable);
 	//struct context* cont = malloc(sizeof(struct context));
 	//contsave(cont);
 	
@@ -140,7 +175,9 @@ save(void)
 	printf(1, "\n\n\n\ntname: %s\n\n\n", t->name);
 	int fdpage = open("backuppage", O_CREATE | O_RDWR);
     fd = open("backup", O_CREATE | O_RDWR);
-    if(fd >= 0 && fdpage >= 0) {
+    int fdcont = open("backupcontext", O_CREATE | O_RDWR);
+    int fdtf = open("backuptf",  O_CREATE | O_RDWR);
+    if(fd >= 0 && fdpage >= 0 && fdcont >= 0 && fdtf >= 0) {
         printf(1, "ok: create backup file succeed\n");
     } else {
         printf(1, "error: create backup file failed\n");
@@ -160,7 +197,8 @@ save(void)
     //write pgtable in file
     
     printf(1, "write message: %d\n", write(fdpage, pgtable, pgtablesize));
-    
+    printf(1, "write message for context: %d\n", write(fdcont, cptr, sizeof(struct context)));
+    printf(1, "write message for context: %d\n", write(fdtf, tfptr, sizeof(struct trapframe)));
     //int i;
     //int sum = 0;
     /*
@@ -183,6 +221,11 @@ save(void)
     printf(1, "size: %d .write ok. name: %s\n", size, t->name);
 
     close(fd);
+    close(fdpage);
+    close(fdcont);
+    close(fdtf);
+    
+    
     return ret;
 }
 

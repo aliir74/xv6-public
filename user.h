@@ -2,6 +2,7 @@ struct stat;
 struct rtcdate;
 struct proc;
 struct context;
+struct trapframe;
 
 // system calls
 int fork(void);
@@ -28,8 +29,8 @@ int uptime(void);
 
 //my syscall
 int pcbp(int addr);
-void pcbload(struct proc*, void* pgtable);
-void pgsave(void* pgptr);
+void pcbload(struct proc*, void* pgtable, struct context* cptr, struct trapframe *tfptr);
+void pgsave(void* pgptr, struct context* cptr, struct trapframe *tfptr);
 
 
 // ulib.c

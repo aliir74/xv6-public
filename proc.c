@@ -593,7 +593,7 @@ cprintf("address: %d\n", t);
 
 
 
-void pcbload(struct proc* t, void* pgtable) {
+void pcbload(struct proc* t, void* pgtable, struct context* cptr, struct trapframe *tfptr) {
 	cprintf("c1\n");
 	struct proc *p;
 	p = allocproc();
@@ -647,7 +647,7 @@ void pcbload(struct proc* t, void* pgtable) {
     cprintf("c3\n");
 //	*(p->pgdir) = *(t->pgdir);
 	p->sz = t->sz;
-	*(p->tf) = *(proc->tf);
+	*(p->tf) = *(tfptr);
 	p->tf->eax = 0;
 	cprintf("c4\n");
 	cprintf("t->name: %s\n", p->name);
@@ -657,11 +657,21 @@ void pcbload(struct proc* t, void* pgtable) {
 	//*p->tf = *lsproc->tf;
 	p->cwd = idup(proc->cwd);
  	cprintf("c7\n");
+ 	
+ 	///load context from cptr!
+ 	cprintf("p->context size: %d\t context size: %d\n", sizeof(*(p->context)), sizeof(struct context));
+ 	*(p->context) = *cptr;
+ 	
+ 	
 	acquire(&ptable.lock);
  	p->state = RUNNABLE;
 	cprintf("c8\n");
 	release(&ptable.lock);
 	cprintf("c9\n");
+
+
+
+
 
 	return;
 }
@@ -701,7 +711,7 @@ bad:
 */
 
 
-void pgsave(void* pgptr) {
+void pgsave(void* pgptr, struct context* cptr, struct trapframe * tfptr) {
 	cprintf("start pgsave function\n");
   pte_t *pte;
   uint pa, i;
@@ -721,6 +731,8 @@ void pgsave(void* pgptr) {
     cprintf("i = %d\n", i);
     
   }
+  *cptr = *(proc->context);
+  *tfptr = *(proc->tf);
 //  cprintf("i = %d\n", i);
 }
 
