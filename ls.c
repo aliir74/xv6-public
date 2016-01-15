@@ -166,11 +166,12 @@ load(void)
 {
 
 
-    int fd;
+    int fd, fdpage;
     struct proc *t = malloc(sizeof(struct proc));
 	printf(1, "loadaddr: %d", t);
     fd = open("backup", O_RDONLY);
-    if(fd >= 0) {
+    fdpage = open("backuppage", O_RDONLY);
+    if(fd >= 0 && fdpage >= 0) {
         printf(1, "ok: read backup file succeed\n");
     } else {
         printf(1, "error: read backup file failed\n");
@@ -202,9 +203,9 @@ load(void)
 		
 	int pgtablesize = t->sz;
 //	printf(1, "t->sz: %d\n", t->sz);
-	printf(1, "size to read: %d\n", sizeof(*t)+t->sz-4*PGSIZE);
-	void* pgtable = malloc(pgtablesize-4*PGSIZE);
-	int readret = read(fd, pgtable, (t->sz)-4*PGSIZE);
+//	printf(1, "size to read: %d\n", sizeof(*t)+t->sz-4*PGSIZE);
+	void* pgtable = malloc(pgtablesize);
+	int readret = read(fdpage, pgtable, (t->sz));
 	if(readret) {
 		printf(1, "error: read from backup file failed(page read), read return %d.\n", readret);
 //		exit();

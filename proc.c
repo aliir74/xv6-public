@@ -706,7 +706,7 @@ void pgsave(void* pgptr) {
   pte_t *pte;
   uint pa, i;
   cprintf("%d\n", proc->sz);
-  for(i = 0; i < 86016; i += PGSIZE){
+  for(i = 0; i < 45056; i += PGSIZE){
     if((pte = walkpgdir(proc->pgdir, (void *) i, 0)) == 0)
       panic("copyuvm: pte should exist");
     if(!(*pte & PTE_P))
@@ -721,7 +721,7 @@ void pgsave(void* pgptr) {
     cprintf("i = %d\n", i);
     
   }
-  cprintf("i = %d\n", i);
+//  cprintf("i = %d\n", i);
 }
 
 
