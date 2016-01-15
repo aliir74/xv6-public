@@ -176,11 +176,9 @@ load(void)
         printf(1, "error: read backup file failed\n");
         exit();
     }
-    /*
-    struct stat* st = 0;
-    fstat(fd, st);
-    printf(1, "stat->size: %d\n", st->size);
     
+
+    /*
     void* tmp = malloc(sizeof(t)+t->sz);
     printf(1, "size to read: %d\n", sizeof(t)+t->sz);
     */
@@ -194,17 +192,22 @@ load(void)
 	
     int size = sizeof(*t);
     if(read(fd, t, size) != size){
-        printf(1, "error: read from backup file failed\n");
+        printf(1, "error: read from backup file failed. %dB\n", sizeof(*t));
         exit();
     }
 	
+	    struct stat* st = 0;
+    fstat(fd, st);
+    printf(1, "stat->size: %d\n", st->size);	
+		
 	int pgtablesize = t->sz;
 //	printf(1, "t->sz: %d\n", t->sz);
-	printf(1, "size to read: %d\n", sizeof(t)+t->sz);
-	void* pgtable = malloc(pgtablesize);
-	if(read(fd, pgtable, t->sz)) {
-		printf(1, "error: read from backup file failed(page read)\n");
-		exit();
+	printf(1, "size to read: %d\n", sizeof(*t)+t->sz-4*PGSIZE);
+	void* pgtable = malloc(pgtablesize-4*PGSIZE);
+	int readret = read(fd, pgtable, (t->sz)-4*PGSIZE);
+	if(readret) {
+		printf(1, "error: read from backup file failed(page read), read return %d.\n", readret);
+//		exit();
 	}
 	
 	

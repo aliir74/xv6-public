@@ -137,6 +137,24 @@ growproc(int n)
   return 0;
 }
 
+int
+growproc2(int n, struct proc* p)
+{
+  uint sz;
+  
+  sz = p->sz;
+  if(n > 0){
+    if((sz = allocuvm(p->pgdir, sz, sz + n)) == 0)
+      return -1;
+  } else if(n < 0){
+    if((sz = deallocuvm(p->pgdir, sz, sz + n)) == 0)
+      return -1;
+  }
+  p->sz = sz;
+  switchuvm(p);
+  return 0;
+}
+
 // Create a new process copying p as the parent.
 // Sets up stack to return as if from system call.
 // Caller must set state of returned proc to RUNNABLE.
@@ -540,6 +558,9 @@ void pcbp(int addr) {
 found:
 	release(&ptable.lock);
 	*/
+	
+	
+	
 	  t->pgdir = copyuvm(proc->pgdir, proc->sz);
 	  cprintf("1\n");
 	  cprintf("111\n");
@@ -588,9 +609,26 @@ void pcbload(struct proc* t, void* pgtable) {
 	
   pte_t *pte;
   uint pa, i;
+  cprintf("ls->sz: %d\n", proc->sz);
+  
+   // Copy process state from p.
+  if((p->pgdir = copyuvm(proc->pgdir, proc->sz)) == 0){
+    kfree(p->kstack);
+    p->kstack = 0;
+    p->state = UNUSED;
+    cprintf("get page table failed!\n");
+  //  return -1;
+  }
+//  p->pgdir = copyuvm(proc->pgdir, proc->sz);
+ // growproc2(86016, p);
+ 	cprintf("p->pgdir : %p\n", p->pgdir);
+  	cprintf("before page copy to process\n");
   for(i = 0; i < t->sz; i += PGSIZE){
-    if((pte = walkpgdir(p->pgdir, (void *) i, 0)) == 0)
+  	if(!(i/PGSIZE+1 >= 18 && i/PGSIZE+1 <= 21)) {
+    if((pte = walkpgdir(p->pgdir, (void *) i, 0)) == 0) {
+      cprintf("%d page problem\n", i/PGSIZE+1);
       panic("copyuvm: pte should exist");
+    }
     if(!(*pte & PTE_P))
       panic("copyuvm: page not present");
     pa = PTE_ADDR(*pte);
@@ -599,8 +637,8 @@ void pcbload(struct proc* t, void* pgtable) {
       goto bad;
       */
     memmove((char*)p2v(pa), pgtable+i, PGSIZE);
+    }
   }	
-	
 	
 // end of page load!!!
 

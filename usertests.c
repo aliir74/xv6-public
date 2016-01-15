@@ -1818,7 +1818,6 @@ save(void)
 	printf(1, "sizeof(struct proc)): %d", sizeof(struct proc));
 //	t->pid = 100;
 	ret = pcbp((int)t);
-	
 	int pgtablesize = t->sz;
 //	int pgtablesize = 172040;
 	void* pgtable = malloc(pgtablesize);
@@ -1849,19 +1848,26 @@ save(void)
         fstat(fd, st);
         printf(1, "stat->size: %d\n", st->size);
     //write pgtable in file
-    int i;
-    int sum = 0;
+    
+    printf(1, "%d\n", write(fd, pgtable, pgtablesize-4*PGSIZE));
+    
+    //int i;
+    //int sum = 0;
+    /*
     for(i = 0; i < t->sz; i += PGSIZE) {
-		if(write(fd, pgtable+i, PGSIZE) != PGSIZE) {
-			printf(1, "error: wirte page %d to backup file failed\n", i/PGSIZE+1);
+    	if(!(i/PGSIZE+1 >= 18 && i/PGSIZE+1 <= 21)) {
+			if(write(fd, pgtable+i, PGSIZE) != PGSIZE) {
+				printf(1, "error: wirte page %d to backup file failed\n", i/PGSIZE+1);
 //			exit();
-		}
+			}
 
-    	sum += PGSIZE;
+    		sum += PGSIZE;
+    	}
     }
+    */
         fstat(fd, st);
-    printf(1, "stat->size: %d\n", st->size);
-    printf(1, "sum: %d\n", sum);
+    printf(1, "stat->size per page: %d\n", (st->size-124)/PGSIZE);
+  //  printf(1, "sum: %d\n", sum);
 //    write(fd, "ali", sizeof("ali"));
     
     printf(1, "size: %d .write ok. name: %s\n", size, t->name);
