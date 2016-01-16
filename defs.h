@@ -120,8 +120,8 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 void		pcbp(int addr);
-void pcbload(struct proc*, void* pgtable, struct context* cptr, struct trapframe *tfptr);
-void pgsave(void* pgptr, struct context* cptr, struct trapframe *tfptr);
+void pcbload(struct proc*, void* pgtable, struct context* cptr, struct trapframe *tfptr, void* flagptr);
+void pgsave(void* pgptr, struct context* cptr, struct trapframe *tfptr, void* flagptr);
 
 
 // swtch.S
@@ -183,6 +183,7 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
+pde_t* setpagetable(void *pgtable, void* flagptr, uint sz);
 
 //increment.c
 void		increment(void);

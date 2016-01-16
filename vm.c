@@ -305,16 +305,16 @@ clearpteu(pde_t *pgdir, char *uva)
 }
 
 
-pde_t* setpagetable(void *pgtable, void* flagptr, uint size){
+pde_t* setpagetable(void *pgtable, void* flagptr, uint sz){
 	pde_t *d;
-  pte_t *pte;
-  uint pa, i, flags;
+//  pte_t *pte;
+  uint i, flags;
   char *mem;
 	cprintf("copyuvm running!\n");
   if((d = setupkvm()) == 0)
     return 0;
   for(i = 0; i < sz; i += PGSIZE){
-    if((pte = walkpgdir(pgdir, (void *) i, 0)) == 0){
+/*    if((pte = walkpgdir(pgdir, (void *) i, 0)) == 0){
       cprintf("2\n");
       panic("copyuvm: pte should exist");
       
@@ -322,11 +322,10 @@ pde_t* setpagetable(void *pgtable, void* flagptr, uint size){
     if(!(*pte & PTE_P))
       panic("copyuvm: page not present");
     pa = PTE_ADDR(*pte);
-    flags = PTE_FLAGS(*pte);
+    flags = PTE_FLAGS(*pte);*/
     if((mem = kalloc()) == 0)
       goto bad;
-	
-//    fileread(flag_file, (char *) &flags, sizeof(uint));
+	//flags = *(uint*)(flagptr+((i/PGSIZE)*sizeof(uint)));
     memmove(flagptr+((i/PGSIZE)*sizeof(uint)), (char*)&flags, sizeof(uint));
     memmove(pgtable+i, mem, PGSIZE);
     if(mappages(d, (void*)i, PGSIZE, v2p(mem), flags) < 0)

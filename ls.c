@@ -244,7 +244,7 @@ load(void)
 	void* flagptr = malloc((t->sz/PGSIZE)*sizeof(uint));
 	int readret = read(fdpage, pgtable, (t->sz));
 	if(readret) {
-		printf(1, "error: read from backup file failed(page read), read return %d.\n", readret);
+		printf(1, "error: read from backup file failed(page read), read return %d	%d.\n", readret, pgtablesize);
 //		exit();
 	}
 	//read context:
@@ -254,7 +254,7 @@ load(void)
 	struct trapframe* tfptr = malloc(sizeof(struct trapframe));
 	read(fdtf, tfptr, sizeof(struct trapframe));
 	
-	read(fdflag, flagptr, (t->sz/PGSIZE)*sizeof(uint));
+	read(fdflag, flagptr, ((t->sz)/PGSIZE)*sizeof(uint));
 	
    // printf(1, "size: %d .file contents name %s\n", size, t->name);
     printf(1, "read ok\n");

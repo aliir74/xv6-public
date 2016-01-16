@@ -6,7 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
-
+#include "stat.h"
 //#include "types.h"
 //#include "user.h"
 #include "fcntl.h"
@@ -534,37 +534,12 @@ void pcbp(int addr) {
 	//struct proc *p;
 	cprintf("address: %d\n", t); 
 
-//	*t = allocproc();
-//	struct proc *pt;	
-	//int i, pid;
- /* struct proc *np = 0;
-	
- 	acquire(&ptable.lock);
- 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-		if(p->state == RUNNING) {
-			//tmp = p;
-			cprintf("pcbp: %s\n", p->name);
-//			pt = p;
-//			*t = *p;
-			
-//			cprintf("tname: %s\n", t->name);
-			goto found;
-
-		}
-	}
-	release(&ptable.lock);
-	return;
-	
-found:
-	release(&ptable.lock);
-	*/
-	
-	
-	
-	  t->pgdir = copyuvm(proc->pgdir, proc->sz);
+//	  t->pgdir = copyuvm(proc->pgdir, proc->sz);
 	  cprintf("1\n");
 	  cprintf("111\n");
 	  t->sz = proc->sz;
+	  t->kstack = proc->kstack;
+	  t->chan = proc->chan;
 	  cprintf("p->sz: %d\tt->z: %d\n", proc->sz, t->sz);
 	  cprintf("1212\n");
 	    //*(t->tf) = *(p->tf);
@@ -596,7 +571,7 @@ cprintf("address: %d\n", t);
 void pcbload(struct proc* t, void* pgtable, struct context* cptr, struct trapframe *tfptr, void* flagptr) {
 
 	//flag file open
-	int fdflag = openFile("backupflag", O_CREATE | O_RDWR);
+	//int fdflag = openFile("backupflag", O_CREATE | O_RDWR);
 //	struct file *flagFile  = proc->ofile[fdflag];
 
 	cprintf("c1\n");
@@ -605,49 +580,9 @@ void pcbload(struct proc* t, void* pgtable, struct context* cptr, struct trapfra
 	cprintf("c2\n");
 	cprintf("t: %s\n", t->name);
     safestrcpy(p->name, t->name, sizeof(t->name));
+    cprintf("t->sz : %d\n", t->sz);
 	p->pgdir = setpagetable(pgtable, flagptr, t->sz);
 //	p->pgdir = copyuvm(t->pgdir, t->sz);
-
-//page load!!!
-
-/*	
-  pte_t *pte;
-  uint pa, i;
-  cprintf("ls->sz: %d\n", proc->sz);
-  
-   // Copy process state from p.
-  if((p->pgdir = copyuvm(proc->pgdir, proc->sz)) == 0){
-    kfree(p->kstack);
-    p->kstack = 0;
-    p->state = UNUSED;
-    cprintf("get page table failed!\n");
-  //  return -1;
-  }
-//  p->pgdir = copyuvm(proc->pgdir, proc->sz);
- // growproc2(86016, p);
- 	cprintf("p->pgdir : %p\n", p->pgdir);
-  	cprintf("before page copy to process\n");
-  for(i = 0; i < t->sz; i += PGSIZE){
-//  	if(!(i/PGSIZE+1 >= 18 && i/PGSIZE+1 <= 21)) {
-    if((pte = walkpgdir(p->pgdir, (void *) i, 0)) == 0) {
-      cprintf("%d page problem\n", i/PGSIZE+1);
-      panic("copyuvm: pte should exist");
-    }
-    if(!(*pte & PTE_P))
-      panic("copyuvm: page not present");
-    pa = PTE_ADDR(*pte);
-    flags = PTE_FLAGS(*pte);
- //   if((mem = kalloc()) == 0)
-   //   goto bad;
-      
-    memmove((char*)p2v(pa), pgtable+i, PGSIZE);
-
-    //mappages(d, (void*)i, PGSIZE, v2p(pgptr+i), flags);
-  //  }
-  }	
-// end of page load!!!
-
-*/
 
     cprintf("c3\n");
 //	*(p->pgdir) = *(t->pgdir);
@@ -662,7 +597,10 @@ void pcbload(struct proc* t, void* pgtable, struct context* cptr, struct trapfra
 	//*p->tf = *lsproc->tf;
 	p->cwd = idup(proc->cwd);
  	cprintf("c7\n");
- 	
+ 	int i;
+ 	for(i = 0; i < NOFILE; i++)
+        if(proc->ofile[i])
+            p->ofile[i] = filedup(proc->ofile[i]);
  	///load context from cptr!
  	cprintf("p->context size: %d\t context size: %d\n", sizeof(*(p->context)), sizeof(struct context));
  	*(p->context) = *cptr;
@@ -720,8 +658,8 @@ void pgsave(void* pgptr, struct context* cptr, struct trapframe * tfptr, void* f
 	cprintf("start pgsave function\n");
 	uint flags;
 	//int r = 0;
-	int fdflag = openfile("backupflag", O_CREATE | O_RDWR);
-	struct file *flagFile = proc->ofile[fdflag];
+	//int fdflag = openfile("backupflag", O_CREATE | O_RDWR);
+	//struct file *flagFile = proc->ofile[fdflag];
   pte_t *pte;
   uint pa, i;
   cprintf("%d\n", proc->sz);
@@ -737,7 +675,7 @@ void pgsave(void* pgptr, struct context* cptr, struct trapframe * tfptr, void* f
       */
     cprintf("i = %d\n", i);
     //filewrite(flagFile, (char*)&flag, sizeof(uint));
-    memmove(flagptr+(i/PGSZIE)*sizeof(uint)), (char*)&flags, sizeof(uint));
+    memmove(flagptr+(i/PGSIZE)*sizeof(uint), (char*)&flags, sizeof(uint));
 //    write(fdflag, &flag, sizeof(uint));
     memmove(pgptr+i, (char*)p2v(pa), PGSIZE);
     cprintf("i = %d\n", i);

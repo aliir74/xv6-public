@@ -163,9 +163,10 @@ save(void)
 	int pgtablesize = t->sz;
 //	int pgtablesize = 172040;
 	void* pgtable = malloc(pgtablesize);
-	printf(1, "malloc(pgtablesize) : %d   %d\n", pgtablesize, t->sz);
+	//printf(1, "malloc(pgtablesize) : %d   %d\n", pgtablesize, t->sz);
 	struct context* cptr = malloc(sizeof(struct context));
 	struct trapframe* tfptr = malloc(sizeof(struct trapframe));
+	void* flagptr = malloc((t->sz/PGSIZE)*sizeof(uint));
 	pgsave(pgtable, cptr, tfptr, flagptr);
 	//save context:
 	//printf(1, "pgtable: %p", pgtable);
@@ -201,7 +202,7 @@ save(void)
     printf(1, "write message: %d\n", write(fdpage, pgtable, pgtablesize));
     printf(1, "write message for context: %d\n", write(fdcont, cptr, sizeof(struct context)));
     printf(1, "write message for context: %d\n", write(fdtf, tfptr, sizeof(struct trapframe)));
-        printf(1, "write message for context: %d\n", write(fdflag, flagptr, (t->sz/PGSZIE)*sizeof(uint)));
+        printf(1, "write message for context: %d\n", write(fdflag, flagptr, (t->sz/PGSIZE)*sizeof(uint)));
     //int i;
     //int sum = 0;
     /*
@@ -228,7 +229,8 @@ save(void)
     close(fdcont);
     close(fdtf);
     close(fdflag);
-    
+//    kill();
+	exit();
     return ret;
 }
 
@@ -243,16 +245,17 @@ main(int argc, char *argv[])
 	for(i = 0; i < 20; i++) {
 		printf(1, "%d\n", i);
 		if(i == 10) {
-			if (save() != 0) {
-				/*if (fork() == 0) {
+			save();
+/*			if (save() != 0) {
+				if (fork() == 0) {
 					load();
 				} else {
 					wait();
 					exit();
-				}*/
-				exit();
-			}
+				}
+		//		exit();
+			//}*/
 		}
 	}
-	exit();
+	return 0;
 }
