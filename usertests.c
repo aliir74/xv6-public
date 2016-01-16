@@ -154,6 +154,7 @@ save(void)
 {
     int fd;
     int ret;
+    int fdflag;
 	struct proc* t = malloc(sizeof(struct proc));
 	printf(1, "address user space function before: %d\n", t);
 	printf(1, "sizeof(struct proc)): %d", sizeof(struct proc));
@@ -165,7 +166,7 @@ save(void)
 	printf(1, "malloc(pgtablesize) : %d   %d\n", pgtablesize, t->sz);
 	struct context* cptr = malloc(sizeof(struct context));
 	struct trapframe* tfptr = malloc(sizeof(struct trapframe));
-	pgsave(pgtable, cptr, tfptr);
+	pgsave(pgtable, cptr, tfptr, flagptr);
 	//save context:
 	//printf(1, "pgtable: %p", pgtable);
 	//struct context* cont = malloc(sizeof(struct context));
@@ -177,7 +178,8 @@ save(void)
     fd = open("backup", O_CREATE | O_RDWR);
     int fdcont = open("backupcontext", O_CREATE | O_RDWR);
     int fdtf = open("backuptf",  O_CREATE | O_RDWR);
-    if(fd >= 0 && fdpage >= 0 && fdcont >= 0 && fdtf >= 0) {
+    fdflag = open("backupflag",  O_CREATE | O_RDWR);
+    if(fd >= 0 && fdpage >= 0 && fdcont >= 0 && fdtf >= 0 && fdflag >= 0) {
         printf(1, "ok: create backup file succeed\n");
     } else {
         printf(1, "error: create backup file failed\n");
@@ -194,11 +196,12 @@ save(void)
     }
         fstat(fd, st);
         printf(1, "stat->size: %d\n", st->size);
+        
     //write pgtable in file
-    
     printf(1, "write message: %d\n", write(fdpage, pgtable, pgtablesize));
     printf(1, "write message for context: %d\n", write(fdcont, cptr, sizeof(struct context)));
     printf(1, "write message for context: %d\n", write(fdtf, tfptr, sizeof(struct trapframe)));
+        printf(1, "write message for context: %d\n", write(fdflag, flagptr, (t->sz/PGSZIE)*sizeof(uint)));
     //int i;
     //int sum = 0;
     /*
@@ -224,7 +227,7 @@ save(void)
     close(fdpage);
     close(fdcont);
     close(fdtf);
-    
+    close(fdflag);
     
     return ret;
 }

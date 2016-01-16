@@ -304,6 +304,43 @@ clearpteu(pde_t *pgdir, char *uva)
   *pte &= ~PTE_U;
 }
 
+
+pde_t* setpagetable(void *pgtable, void* flagptr, uint size){
+	pde_t *d;
+  pte_t *pte;
+  uint pa, i, flags;
+  char *mem;
+	cprintf("copyuvm running!\n");
+  if((d = setupkvm()) == 0)
+    return 0;
+  for(i = 0; i < sz; i += PGSIZE){
+    if((pte = walkpgdir(pgdir, (void *) i, 0)) == 0){
+      cprintf("2\n");
+      panic("copyuvm: pte should exist");
+      
+    }
+    if(!(*pte & PTE_P))
+      panic("copyuvm: page not present");
+    pa = PTE_ADDR(*pte);
+    flags = PTE_FLAGS(*pte);
+    if((mem = kalloc()) == 0)
+      goto bad;
+	
+//    fileread(flag_file, (char *) &flags, sizeof(uint));
+    memmove(flagptr+((i/PGSIZE)*sizeof(uint)), (char*)&flags, sizeof(uint));
+    memmove(pgtable+i, mem, PGSIZE);
+    if(mappages(d, (void*)i, PGSIZE, v2p(mem), flags) < 0)
+      goto bad;
+  }
+  return d;
+
+bad:
+  freevm(d);
+  return 0;
+
+}
+
+
 // Given a parent process's page table, create a copy
 // of it for a child.
 pde_t*

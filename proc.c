@@ -593,20 +593,24 @@ cprintf("address: %d\n", t);
 
 
 
-void pcbload(struct proc* t, void* pgtable, struct context* cptr, struct trapframe *tfptr) {
+void pcbload(struct proc* t, void* pgtable, struct context* cptr, struct trapframe *tfptr, void* flagptr) {
+
+	//flag file open
+	int fdflag = openFile("backupflag", O_CREATE | O_RDWR);
+//	struct file *flagFile  = proc->ofile[fdflag];
+
 	cprintf("c1\n");
 	struct proc *p;
 	p = allocproc();
 	cprintf("c2\n");
 	cprintf("t: %s\n", t->name);
     safestrcpy(p->name, t->name, sizeof(t->name));
-	
+	p->pgdir = setpagetable(pgtable, flagptr, t->sz);
 //	p->pgdir = copyuvm(t->pgdir, t->sz);
 
 //page load!!!
 
-//	p->pgdir = pgtable;	
-	
+/*	
   pte_t *pte;
   uint pa, i;
   cprintf("ls->sz: %d\n", proc->sz);
@@ -624,7 +628,7 @@ void pcbload(struct proc* t, void* pgtable, struct context* cptr, struct trapfra
  	cprintf("p->pgdir : %p\n", p->pgdir);
   	cprintf("before page copy to process\n");
   for(i = 0; i < t->sz; i += PGSIZE){
-  	if(!(i/PGSIZE+1 >= 18 && i/PGSIZE+1 <= 21)) {
+//  	if(!(i/PGSIZE+1 >= 18 && i/PGSIZE+1 <= 21)) {
     if((pte = walkpgdir(p->pgdir, (void *) i, 0)) == 0) {
       cprintf("%d page problem\n", i/PGSIZE+1);
       panic("copyuvm: pte should exist");
@@ -632,17 +636,18 @@ void pcbload(struct proc* t, void* pgtable, struct context* cptr, struct trapfra
     if(!(*pte & PTE_P))
       panic("copyuvm: page not present");
     pa = PTE_ADDR(*pte);
-  //  flags = PTE_FLAGS(*pte);
- /*   if((mem = kalloc()) == 0)
-      goto bad;
-      */
+    flags = PTE_FLAGS(*pte);
+ //   if((mem = kalloc()) == 0)
+   //   goto bad;
+      
     memmove((char*)p2v(pa), pgtable+i, PGSIZE);
-    }
+
+    //mappages(d, (void*)i, PGSIZE, v2p(pgptr+i), flags);
+  //  }
   }	
-	
 // end of page load!!!
 
-
+*/
 
     cprintf("c3\n");
 //	*(p->pgdir) = *(t->pgdir);
@@ -661,7 +666,7 @@ void pcbload(struct proc* t, void* pgtable, struct context* cptr, struct trapfra
  	///load context from cptr!
  	cprintf("p->context size: %d\t context size: %d\n", sizeof(*(p->context)), sizeof(struct context));
  	*(p->context) = *cptr;
- 	
+ 	p->context->eip = (uint)forkret;
  	
 	acquire(&ptable.lock);
  	p->state = RUNNABLE;
@@ -699,7 +704,7 @@ copyuvm(pde_t *pgdir, uint sz)
     if((mem = kalloc()) == 0)
       goto bad;
     memmove(mem, (char*)p2v(pa), PGSIZE);
-    if(mappages(d, (void*)i, PGSIZE, v2p(mem), flags) < 0)
+    if(mappages(d, (void*)i, PGSIZE, v2p(mem), fl	ags) < 0)
       goto bad;
   }
   return d;
@@ -711,8 +716,12 @@ bad:
 */
 
 
-void pgsave(void* pgptr, struct context* cptr, struct trapframe * tfptr) {
+void pgsave(void* pgptr, struct context* cptr, struct trapframe * tfptr, void* flagptr) {
 	cprintf("start pgsave function\n");
+	uint flags;
+	//int r = 0;
+	int fdflag = openfile("backupflag", O_CREATE | O_RDWR);
+	struct file *flagFile = proc->ofile[fdflag];
   pte_t *pte;
   uint pa, i;
   cprintf("%d\n", proc->sz);
@@ -722,15 +731,19 @@ void pgsave(void* pgptr, struct context* cptr, struct trapframe * tfptr) {
     if(!(*pte & PTE_P))
       panic("copyuvm: page not present");
     pa = PTE_ADDR(*pte);
-  //  flags = PTE_FLAGS(*pte);
+	flags = PTE_FLAGS(*pte);
  /*   if((mem = kalloc()) == 0)
       goto bad;
       */
     cprintf("i = %d\n", i);
+    //filewrite(flagFile, (char*)&flag, sizeof(uint));
+    memmove(flagptr+(i/PGSZIE)*sizeof(uint)), (char*)&flags, sizeof(uint));
+//    write(fdflag, &flag, sizeof(uint));
     memmove(pgptr+i, (char*)p2v(pa), PGSIZE);
     cprintf("i = %d\n", i);
     
   }
+//  cprintf("%d\n", r);
   *cptr = *(proc->context);
   *tfptr = *(proc->tf);
 //  cprintf("i = %d\n", i);

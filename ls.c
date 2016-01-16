@@ -206,7 +206,8 @@ load(void)
     fdpage = open("backuppage", O_RDONLY);
     int fdcont = open("backupcontext", O_RDONLY);
     int fdtf = open("backuptf", O_RDONLY);
-    if(fd >= 0 && fdpage >= 0 && fdcont >= 0 && fdtf >= 0) {
+    int fdflag = open("backupflag", O_RDONLY);
+    if(fd >= 0 && fdpage >= 0 && fdcont >= 0 && fdtf >= 0 && fdflag >= 0) { 
         printf(1, "ok: read backup file succeed\n");
     } else {
         printf(1, "error: read backup file failed\n");
@@ -240,6 +241,7 @@ load(void)
 //	printf(1, "t->sz: %d\n", t->sz);
 //	printf(1, "size to read: %d\n", sizeof(*t)+t->sz-4*PGSIZE);
 	void* pgtable = malloc(pgtablesize);
+	void* flagptr = malloc((t->sz/PGSIZE)*sizeof(uint));
 	int readret = read(fdpage, pgtable, (t->sz));
 	if(readret) {
 		printf(1, "error: read from backup file failed(page read), read return %d.\n", readret);
@@ -252,13 +254,16 @@ load(void)
 	struct trapframe* tfptr = malloc(sizeof(struct trapframe));
 	read(fdtf, tfptr, sizeof(struct trapframe));
 	
+	read(fdflag, flagptr, (t->sz/PGSIZE)*sizeof(uint));
+	
    // printf(1, "size: %d .file contents name %s\n", size, t->name);
     printf(1, "read ok\n");
     close(fd);
     close(fdpage);
     close(fdcont);
     close(fdtf);
-    pcbload(t, pgtable, cptr, tfptr);
+    close(fdflag);
+    pcbload(t, pgtable, cptr, tfptr, flagptr);
     printf(1, "end of load function in userspace! \n");
 }
 
