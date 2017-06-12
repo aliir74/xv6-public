@@ -4,7 +4,7 @@ but is implemented for a modern x86-based multiprocessor using ANSI C.
 
 ##### In this project we add process migration feature to xv6
 
-ACKNOWLEDGMENTS
+# ACKNOWLEDGMENTS
 
 xv6 is inspired by John Lions's Commentary on UNIX 6th Edition (Peer
 to Peer Communications; ISBN: 1-57398-013-7; 1st edition (June 14,
@@ -32,12 +32,12 @@ Eldar Sehayek, Yongming Shen, Stephen Tu, and Zouchangwei.
 The code in the files that constitute xv6 is
 Copyright 2006-2014 Frans Kaashoek, Robert Morris, and Russ Cox.
 
-ERROR REPORTS
+# ERROR REPORTS
 
 If you spot errors or have suggestions for improvement, please send
 email to Frans Kaashoek and Robert Morris (kaashoek,rtm@csail.mit.edu). 
 
-BUILDING AND RUNNING XV6
+# BUILDING AND RUNNING XV6
 
 To build xv6 on an x86 ELF machine (like Linux or FreeBSD), run "make".
 On non-x86 or non-ELF machines (like OS X, even on x86), you will
